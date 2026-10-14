@@ -1,0 +1,65 @@
+name: binsider
+base: core26
+version: '0.3.2'
+title: Binsider
+summary: Analyze ELF binaries in the terminal
+description: |
+  Binsider is a terminal interface for inspecting ELF binaries. It shows
+  general file information, headers, symbols, shared libraries, strings and
+  a hex view.
+
+  **Examples**
+
+     binsider ./my-program
+     binsider --tab strings --min-len 8 ./my-program
+     binsider --tab hexdump ./my-program
+
+  **File access**
+
+  Binsider can open files in your home directory. To also open files on USB
+  drives and other removable media (/media, /mnt), run:
+
+     sudo snap connect binsider:removable-media
+
+  The snap cannot see /usr/local, /opt or the host's /tmp, and tracing
+  system calls in the Dynamic tab is blocked by the snap sandbox.
+license: MIT OR Apache-2.0
+grade: stable
+confinement: strict
+website: https://binsider.dev
+source-code: https://github.com/orhun/binsider
+issues: https://github.com/orhun/binsider/issues
+
+platforms:
+  amd64:
+  arm64:
+  armhf:
+  ppc64el:
+  riscv64:
+  s390x:
+
+apps:
+  binsider:
+    command: bin/binsider
+    plugs:
+      - home
+      - removable-media
+
+parts:
+  binsider:
+    plugin: rust
+    source: https://github.com/orhun/binsider.git
+    source-tag: 'v0.3.2'
+    rust-channel: '1.93.0'
+    build-packages:
+      - build-essential
+    override-build: |
+      # Dynamic analysis (lurk) only supports amd64, arm64 and riscv64.
+      # Upstream builds the other targets without it as well.
+      case "$CRAFT_ARCH_BUILD_FOR" in
+        amd64|arm64|riscv64) ;;
+        *) sed -i 's/^default = .*/default = []/' Cargo.toml ;;
+      esac
+      craftctl default
+      install -Dm644 LICENSE-MIT "$CRAFT_PART_INSTALL/share/doc/binsider/LICENSE-MIT"
+      install -Dm644 LICENSE-APACHE "$CRAFT_PART_INSTALL/share/doc/binsider/LICENSE-APACHE"

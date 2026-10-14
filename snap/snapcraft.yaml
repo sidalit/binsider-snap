@@ -29,6 +29,7 @@ confinement: strict
 website: https://binsider.dev
 source-code: https://github.com/orhun/binsider
 issues: https://github.com/orhun/binsider/issues
+contact: https://github.com/sidalit/binsider-snap/issues
 
 platforms:
   amd64:

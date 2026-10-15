@@ -21,8 +21,8 @@ description: |
 
      sudo snap connect binsider:removable-media
 
-  The snap cannot see /usr/local, /opt or the host's /tmp, and tracing
-  system calls in the Dynamic tab is blocked by the snap sandbox.
+  The snap cannot see /usr/local, /opt or the host's /tmp. System call
+  tracing in the Dynamic tab is disabled, as the snap sandbox blocks it.
 license: MIT OR Apache-2.0
 grade: stable
 confinement: strict
@@ -52,15 +52,12 @@ parts:
     source: https://github.com/orhun/binsider.git
     source-tag: 'v0.3.2'
     rust-channel: '1.93.0'
+    # Leave out dynamic analysis: its tracer needs ptrace, which strict
+    # confinement blocks and no interface available to this snap allows.
+    rust-no-default-features: true
     build-packages:
       - build-essential
     override-build: |
-      # Dynamic analysis (lurk) only supports amd64, arm64 and riscv64.
-      # Upstream builds the other targets without it as well.
-      case "$CRAFT_ARCH_BUILD_FOR" in
-        amd64|arm64|riscv64) ;;
-        *) sed -i 's/^default = .*/default = []/' Cargo.toml ;;
-      esac
       craftctl default
       install -Dm644 LICENSE-MIT "$CRAFT_PART_INSTALL/share/doc/binsider/LICENSE-MIT"
       install -Dm644 LICENSE-APACHE "$CRAFT_PART_INSTALL/share/doc/binsider/LICENSE-APACHE"

@@ -28,9 +28,13 @@ binsider --tab strings --min-len 8 ~/ls
 
 ### Dynamic analysis
 
-The Dynamic tab cannot trace system calls. Pressing `r` shows ``error: `EPERM: Operation not permitted` ``. Tracing needs the `ptrace` system call, which strict confinement blocks, and no interface a normal snap can use allows it.
+The snap is built without system call tracing. The Dynamic tab is still there, but it only shows a message saying the `dynamic-analysis` feature is not enabled. Tracing needs the `ptrace` system call, which strict confinement blocks, and no interface a normal snap can use allows it.
 
-On armhf, ppc64el and s390x the Dynamic tab is not built at all, as upstream's tracer only supports amd64, arm64 and riscv64.
+To trace a program, use `strace` on your system or the upstream `binsider` binary:
+
+```bash
+strace -f ./my-program
+```
 
 ### System binaries
 

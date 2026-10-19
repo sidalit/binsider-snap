@@ -1,6 +1,6 @@
 name: binsider
 base: core26
-version: '0.3.2'
+adopt-info: binsider
 title: Binsider
 summary: Analyze ELF binaries in the terminal
 description: |
@@ -50,6 +50,7 @@ parts:
   binsider:
     plugin: rust
     source: https://github.com/orhun/binsider.git
+    # renovate: depName=orhun/binsider
     source-tag: 'v0.3.2'
     rust-channel: '1.93.0'
     # Leave out dynamic analysis: its tracer needs ptrace, which strict
@@ -57,6 +58,9 @@ parts:
     rust-no-default-features: true
     build-packages:
       - build-essential
+    override-pull: |
+      craftctl default
+      craftctl set version="$(git -C "$CRAFT_PART_SRC" describe --tags --match 'v[0-9]*' | sed 's/^v//')"
     override-build: |
       craftctl default
       install -Dm644 LICENSE-MIT "$CRAFT_PART_INSTALL/share/doc/binsider/LICENSE-MIT"

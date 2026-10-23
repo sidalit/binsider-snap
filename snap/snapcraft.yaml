@@ -27,8 +27,12 @@ license: MIT OR Apache-2.0
 grade: stable
 confinement: strict
 website: https://binsider.dev
-source-code: https://github.com/orhun/binsider
-issues: https://github.com/orhun/binsider/issues
+source-code:
+  - https://github.com/orhun/binsider
+  - https://github.com/sidalit/binsider-snap
+issues:
+  - https://github.com/orhun/binsider/issues
+  - https://github.com/sidalit/binsider-snap/issues
 contact: https://github.com/sidalit/binsider-snap/issues
 
 platforms:

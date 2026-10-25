@@ -1,60 +1,67 @@
-# Binsider snap
+<div align="center">
+
+<img src="snap/gui/binsider.png" alt="Binsider logo" width="128" />
+
+# Binsider
+
+**Inspect ELF binaries from your terminal.**
 
 [![binsider](https://snapcraft.io/binsider/badge.svg)](https://snapcraft.io/binsider)
+[![Base: core26](https://img.shields.io/badge/Base-core26-2C8C3C?logo=canonical&logoColor=white)](https://snapcraft.io/core26)
+![Confinement: strict](https://img.shields.io/badge/Confinement-strict-2C8C3C)
+[![Maintainer: sidaliteir](https://img.shields.io/badge/Maintainer-sidaliteir-2C8C3C?logo=snapcraft&logoColor=white)](https://snapcraft.io/publisher/sidaliteir)
+![Architectures: amd64 and arm64](https://img.shields.io/badge/Architectures-amd64%20%7C%20arm64-2C8C3C?logo=linux&logoColor=white)
 
-Snap packaging for [Binsider](https://github.com/orhun/binsider), a terminal interface for ELF inspection, hexadecimal analysis, and static/dynamic binary analysis.
+[Getting Started](#getting-started) · [Configure](#configure) · [Limitations](#limitations) · [Build](#build) · [Support](#support) · [License](#license)
 
-Unofficial build, not affiliated with or endorsed by the Binsider project.
+Unofficial snap packaging for [Binsider](https://github.com/orhun/binsider), a terminal interface for inspecting headers, symbols, strings and hexadecimal data.
 
-## Build
+</div>
 
-```bash
-snapcraft pack
-```
+---
 
-## Install and try
+## Getting Started
 
 <a href="https://snapcraft.io/binsider"><img alt="Get it from the Snap Store" src="https://snapcraft.io/en/dark/install.svg" width="180"></a>
 
 ```bash
-sudo snap install binsider                   # or a local build: ./binsider_0.3.2_*.snap --dangerous
-sudo snap connect binsider:removable-media   # optional: /media, /mnt
+sudo snap install binsider
 cp /usr/bin/ls ~/ls
 binsider ~/ls
-binsider --tab strings --min-len 8 ~/ls
 ```
 
-## Known limitations
+Copy host binaries into your home folder before opening them. Binsider can inspect visible files there without additional setup.
 
-### Dynamic analysis
+## Configure
 
-The snap is built without system call tracing. The Dynamic tab is still there, but it only shows a message saying the `dynamic-analysis` feature is not enabled. Tracing needs the `ptrace` system call, which strict confinement blocks, and no interface a normal snap can use allows it.
+There are no `snap set` options. Choose the view with command-line options, such as `binsider --tab strings --min-len 8 ~/ls`; see `binsider --help` for the available options.
 
-To trace a program, use `strace` on your system or the upstream `binsider` binary:
+To open files on removable drives under `/media` or `/mnt`:
 
 ```bash
-strace -f ./my-program
+sudo snap connect binsider:removable-media
 ```
 
-### System binaries
+## Limitations
 
-Binsider runs inside the snap sandbox, so `/usr/bin` and `/usr/lib` are those of the snap's base (Ubuntu Core 26), not of your system. `binsider /usr/bin/ls` opens the base's `ls`, and the shared libraries listed in the General tab come from the base too.
+- System call tracing is disabled. The Dynamic tab reports that the feature is unavailable; static inspection still works. Use your host's `strace` separately when you need tracing.
+- `/usr/bin` and `/usr/lib` refer to the snap's base, so their binaries and libraries may differ from your host's.
+- Host paths such as `/usr/local`, `/opt` and `/tmp` are not visible. Copy the binary into a visible folder in your home directory first.
 
-Paths that only exist on your system, such as `/usr/local`, `/opt` or `/tmp`, are not visible and fail with `Unable to locate binary`. To inspect such a file, copy it to your home directory first:
+## Build
 
 ```bash
-cp /usr/local/bin/my-program ~/
-binsider ~/my-program
+git clone https://github.com/sidalit/binsider-snap.git
+cd binsider-snap
+sudo snap install snapcraft --classic
+snapcraft pack
 ```
 
-## Update to a new upstream release
+## Support
 
-Change `version` in `snap/snapcraft.yaml`, then rebuild.
-
-## Automation
-
-Builds, publishing, and dependency updates use [snap-automation](https://github.com/sidalit/snap-automation).
+- **Installation or snap issues:** [open a packaging issue](https://github.com/sidalit/binsider-snap/issues).
+- **Application bugs:** [report them upstream](https://github.com/orhun/binsider/issues).
 
 ## License
 
-The packaging is MIT-licensed (see `LICENSE`). Binsider is licensed under MIT or Apache-2.0; its dependencies carry their own licenses.
+Snap packaging: [MIT](https://github.com/sidalit/binsider-snap/blob/main/LICENSE).

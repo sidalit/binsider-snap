@@ -2,6 +2,7 @@ name: binsider
 base: core26
 version: '0.3.2'
 title: Binsider
+icon: snap/gui/binsider.png
 summary: Analyze ELF binaries in the terminal
 description: |
   Binsider is a terminal interface for inspecting ELF binaries. It shows
